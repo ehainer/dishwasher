@@ -1,0 +1,12 @@
+README.md
+README.rdoc
+Rakefile
+dishwasher.gemspec
+lib/dishwasher.rb
+lib/dishwasher/load.rb
+lib/generators/dishwasher_generator.rb
+lib/generators/orm_helpers.rb
+lib/generators/templates/dishwasher.rb
+lib/generators/templates/dishwasher_loads.rb
+lib/generators/templates/setup.rb
+Manifest
