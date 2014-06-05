@@ -16,10 +16,8 @@ module Dishwasher
 	module ClassMethods
 		def wash(*args)
 			puts "---------------------"
-			puts self.table_name
-			args.each do |arg|
-				puts arg
-			end
+			puts self.to_s
+			#unless Dishwasher::Wash.has?(self.to_s)
 			puts "====================="
 		end
 	end
