@@ -22,7 +22,9 @@ module Dishwasher
 	module ClassMethods
 		def wash(*args)
 			puts "---------------------"
-			puts args.to_yaml
+			args.each do |k,v|
+				puts v
+			end
 			puts "====================="
 		end
 	end
