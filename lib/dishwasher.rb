@@ -13,14 +13,10 @@ module Dishwasher
 		base.extend ClassMethods
 	end
 
-	def klass
-		self
-	end
-
 	module ClassMethods
 		def wash(*args)
 			puts "---------------------"
-			puts klass
+			puts self.to_yaml
 			args.each do |arg|
 				puts arg
 			end
