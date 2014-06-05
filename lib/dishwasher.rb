@@ -14,10 +14,9 @@ module Dishwasher
 	end
 
 	module ClassMethods
-		require 'dishwasher'
 		def wash(*args)
 			puts "---------------------"
-			Dishwasher::Wash.ensure_washing(self.to_s)
+			::Dishwasher::Wash.ensure_washing(self.to_s)
 			puts "====================="
 		end
 	end
