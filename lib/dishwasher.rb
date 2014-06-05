@@ -20,7 +20,7 @@ module Dishwasher
 	module ClassMethods
 		def wash(*args)
 			puts "---------------------"
-			debugger
+			puts klass
 			args.each do |arg|
 				puts arg
 			end
