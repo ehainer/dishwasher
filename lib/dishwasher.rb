@@ -10,6 +10,7 @@ module Dishwasher
 	@@scan = {}
 
 	def self.included(base)
+		debugger
 		base.extend ClassMethods
 	end
 
