@@ -8,9 +8,6 @@ module Dishwasher
 	mattr_accessor :state
 	@@state = {}
 
-	mattr_accessor :scan
-	@@scan = {}
-
 	def self.included(base)
 		base.extend ClassMethods
 	end
@@ -18,7 +15,7 @@ module Dishwasher
 	module ClassMethods
 		def wash(*args)
 			puts "---------------------"
-			::Dishwasher::Wash.ensure_washing(self.to_s)
+			::Dishwasher::Wash.ensure_washing(self.to_s, args)
 			puts "====================="
 		end
 	end
