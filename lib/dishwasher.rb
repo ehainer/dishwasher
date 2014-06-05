@@ -10,14 +10,11 @@ module Dishwasher
 	@@scan = {}
 
 	def self.included(base)
-		debugger
 		base.extend ClassMethods
 	end
 
-	def ensure_unique(name)
-		begin
-			self[name] = yield
-		end while self.class.exists?(name => self[name])
+	def klass
+		self
 	end
 
 	module ClassMethods
