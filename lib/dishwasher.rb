@@ -16,7 +16,7 @@ module Dishwasher
 	module ClassMethods
 		def wash(*args)
 			puts "---------------------"
-			puts self.to_yaml
+			puts self.table_name
 			args.each do |arg|
 				puts arg
 			end
