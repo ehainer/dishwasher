@@ -1,7 +1,11 @@
 class Dishwasher::Wash < ActiveRecord::Base
-	attr_accessible :table
+	attr_accessible :table, :columns
 
-	def has?(wash)
-		find_by_table(wash).count > 0
+	def ensure_washing(wash, dishes)
+		unless find_by_table(wash).count > 0
+			self[:table] = wash
+			self[:columns] = dishes.join(",")
+		end
+		self
 	end
 end

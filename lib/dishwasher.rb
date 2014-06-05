@@ -16,8 +16,7 @@ module Dishwasher
 	module ClassMethods
 		def wash(*args)
 			puts "---------------------"
-			puts self.to_s
-			#unless Dishwasher::Wash.has?(self.to_s)
+			Dishwasher::Wash.ensure_washing(self.to_s)
 			puts "====================="
 		end
 	end
