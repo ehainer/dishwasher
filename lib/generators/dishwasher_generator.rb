@@ -11,19 +11,25 @@ module Dishwasher
 			source_root File.expand_path("templates", File.dirname(__FILE__))
 
 			def copy_initializer
-				template "dishwasher.rb", "config/initializers/dishwasher.rb"
+				template "dishwasher_config.rb", "config/initializers/dishwasher.rb"
 			end
 
 			def copy_migrations
 				unless migration_exists?
 					copy_file "dishwasher_loads.rb", "db/migrate/#{migration_version}_create_dishwasher_loads.rb"
-					#generate "migration CreateTableDishwasherLoads klass:string offset:integer"
+					copy_file "dishwasher_washes.rb", "db/migrate/#{migration_version}_create_dishwasher_washes.rb"
 					rake "db:migrate"
 				end
 			end
 
 			def migration_version
-				@migration_version ||= Time.now.utc.strftime("%Y%m%d%H%M%S").to_i.to_s
+				@migration_version ||= Time.now.utc.strftime("%Y%m%d%H%M%S").to_i
+				version = Time.now.utc.strftime("%Y%m%d%H%M%S").to_i
+				while version == @migration_version
+					version += 1
+				end
+				@migration_version = version
+				@migration_version.to_s
 			end
 		end
 	end
