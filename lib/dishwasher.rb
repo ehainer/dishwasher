@@ -1,3 +1,5 @@
+require 'dishwasher/wash'
+
 module Dishwasher
 
 	mattr_accessor :chunk_size
