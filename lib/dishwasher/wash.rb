@@ -4,8 +4,7 @@ module Dishwasher
 			dishes = dishes.join(",")
 			existing = where(table: wash, columns: dishes)
 			unless existing.length > 0
-				self[:table] = wash
-				self[:columns] = dishes
+				create(table: wash, columns: dishes)
 			end
 			self
 		end
