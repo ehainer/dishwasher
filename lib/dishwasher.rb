@@ -22,6 +22,7 @@ module Dishwasher
 	module ClassMethods
 		def wash(*args)
 			puts "---------------------"
+			puts self.class.name
 			args.each do |arg|
 				puts arg
 			end
