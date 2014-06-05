@@ -22,8 +22,8 @@ module Dishwasher
 	module ClassMethods
 		def wash(*args)
 			puts "---------------------"
-			args.each do |k,v|
-				puts v
+			args.each do |arg|
+				puts arg
 			end
 			puts "====================="
 		end
