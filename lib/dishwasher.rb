@@ -1,4 +1,5 @@
 require 'dishwasher/wash'
+require 'dishwasher/load'
 
 module Dishwasher
 
