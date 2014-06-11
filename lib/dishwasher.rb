@@ -15,9 +15,7 @@ module Dishwasher
 
 	module ClassMethods
 		def wash(*args)
-			puts "---------------------"
-			::Dishwasher::Wash.ensure_washing(self.to_s, args)
-			puts "====================="
+			::Dishwasher::Wash.ensure_washing(self, args)
 		end
 	end
 
@@ -34,7 +32,8 @@ module Dishwasher
 		puts ""
 		puts "Running Dishwasher..."
 		begin
-			can_do_dishes
+			invoke_all_models
+			can_do_dishes?
 			init_state
 			load = Dishwasher::Load.new
 			load.start
@@ -50,6 +49,12 @@ module Dishwasher
 		Dishwasher::Load.all.count > 0
 	end
 
+	def self.invoke_all_models
+		Dir.glob(File.expand_path("app/models/**/*", Rails.root)).each do |model_file|
+			require model_file
+		end
+	end
+
 	def self.init_state
 		if has_recent_load?
 			self.state = get_recent_state
@@ -60,12 +65,19 @@ module Dishwasher
 
 	def self.get_recent_state
 		load = Dishwasher::Load.order("created_at DESC").limit(1).first
-		return get_initial_state unless tables.map{ |k| k.camelize.constantize.to_s }.include?(load.klass)
-		{ klass: load.klass, offset: load.offset, columns: get_columns(load.klass) }
+		wash = Dishwasher::Wash.where(table: load.klass).first
+		return get_initial_state unless wash.nil?
+		build_state(load.klass, load.offset, wash.columns)
 	end
 
 	def self.get_initial_state
-		{ klass: tables.first, offset: 0, columns: get_columns }
+		wash = Dishwasher::Wash.all.first
+		build_state(wash[:table], 0, wash[:columns])
+	end
+
+	def self.build_state(klass, offset, columns)
+		columns = columns.split(",") unless columns.kind_of?(Array)
+		{ klass: klass.constantize, offset: offset, columns: columns }
 	end
 
 	def self.advance_table
@@ -83,15 +95,14 @@ module Dishwasher
 		self.state[:columns] = get_columns(next_table)
 	end
 
-	def self.can_do_dishes
-		raise Dishwasher::Suds.new("Nothing configured to scan.") if self.scan.keys.size == 0
+	def self.can_do_dishes?
+		raise Dishwasher::Suds.new("Nothing configured to scan.") if Dishwasher::Wash.all.count == 0
 	end
 
 	private
 
 		def self.tables
-			string_hash = Hash[self.scan.stringify_keys.map{ |k,v| [k.camelize.constantize.to_s, v] }]
-			string_hash.keys
+			Dishwasher::Wash.select(:table).map(&:table)
 		end
 
 		def self.get_table
@@ -99,15 +110,11 @@ module Dishwasher
 		end
 
 		def self.get_columns(klass=nil)
-			columns = []
-			string_hash = Hash[self.scan.stringify_keys.map{ |k,v| [k.camelize.constantize.to_s, v] }]
-			unless klass.nil?
-				columns = string_hash[klass]
-			else
-				columns = string_hash.values.first
+			wash = Dishwasher::Wash.where(table: klass.to_s).first
+			unless wash.nil?
+				return wash.columns.split(",")
 			end
-			columns = [columns] unless columns.kind_of?(Array)
-			columns
+			[]
 		end
 end
 
