@@ -83,24 +83,18 @@ module Dishwasher
 	end
 
 	def self.advance_table
-		puts "################################"
-		puts self.state
-
-		#current = self.state[:klass]
-		#next_table = tables.first
-		#puts tables.to_yaml
-		#current_index = tables.index(current)
-		#unless current_index.nil?
-		#	current_index += 1
-		#	if current_index < tables.size
-		#		next_table = tables[current_index]
-		#	end
-		#end
-		#self.state[:klass] = next_table.constantize
-		#self.state[:offset] = 0
-		#puts "======================"
-		#puts next_table
-		#self.state[:columns] = get_columns(next_table)
+		current = self.state[:klass].to_s
+		next_table = tables.first
+		current_index = tables.index(current)
+		unless current_index.nil?
+			current_index += 1
+			if current_index < tables.size
+				next_table = tables[current_index]
+			end
+		end
+		self.state[:klass] = next_table.constantize
+		self.state[:offset] = 0
+		self.state[:columns] = get_columns(next_table)
 	end
 
 	def self.can_do_dishes?
