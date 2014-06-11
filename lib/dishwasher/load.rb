@@ -1,5 +1,7 @@
 module Dishwasher
 	class Load < ActiveRecord::Base
+		@select_count = 20
+
 		def start
 			@data ||= []
 			@select_count = Dishwasher.chunk_size
