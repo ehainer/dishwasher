@@ -60,13 +60,13 @@ module Dishwasher
 				data = select_remainder
 			end
 
-			puts "HELLO"
 			Dishwasher.state[:offset] += data.length
 
 			@select_count = 0 if data.length == 0
 
 			if must_advance?
 				Dishwasher.advance_table
+				puts "HELLO"
 			end
 			data
 		end
