@@ -62,6 +62,8 @@ module Dishwasher
 
 			Dishwasher.state[:offset] += data.length
 
+			puts data.inspect
+
 			#@select_count = 0 if data.length == 0
 
 			if must_advance?
