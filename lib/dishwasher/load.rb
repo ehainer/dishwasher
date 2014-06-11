@@ -64,7 +64,7 @@ module Dishwasher
 
 			if Dishwasher.tables.size == 1 && data.length == 0
 				puts @select_count
-				#@select_count ||= @select_count-10
+				@select_count = 0
 			end
 
 			if must_advance?
