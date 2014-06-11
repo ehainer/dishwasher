@@ -66,9 +66,9 @@ module Dishwasher
 
 			Dishwasher.state[:offset] += data.length
 
-			#if Dishwasher.tables.size == 1 && data.length == 0
+			if Dishwasher.tables.size == 1 && data.length == 0
 			#	raise Dishwasher::Suds.new("Nothing to scan")
-			#end
+			end
 
 			#if must_advance?
 			#	Dishwasher.advance_table
