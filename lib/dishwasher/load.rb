@@ -62,8 +62,8 @@ module Dishwasher
 
 			Dishwasher.state[:offset] += data.length
 
-			if Dishwasher.tables.size == 1
-				#@select_count = 0
+			if Dishwasher.tables.size == 1 && data.length == 0
+				@select_count = @select_count-10
 			end
 
 			if must_advance?
