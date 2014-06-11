@@ -64,9 +64,9 @@ module Dishwasher
 
 			#@select_count = 0 if data.length == 0
 
-			#if must_advance?
-			#	Dishwasher.advance_table
-			#end
+			if must_advance?
+				Dishwasher.advance_table
+			end
 			data
 		end
 
