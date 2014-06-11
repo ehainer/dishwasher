@@ -70,9 +70,9 @@ module Dishwasher
 				raise Dishwasher::Suds.new("Nothing to scan")
 			end
 
-			if must_advance?
-				Dishwasher.advance_table
-			end
+			#if must_advance?
+			#	Dishwasher.advance_table
+			#end
 			data
 		end
 
