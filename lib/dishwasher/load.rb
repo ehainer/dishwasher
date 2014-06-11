@@ -72,14 +72,12 @@ module Dishwasher
 
 		def select_all
 			results = table.select(Dishwasher.state[:columns]).offset(Dishwasher.state[:offset])
-			puts "Result Size For " + table.to_s + ": " + results.length.to_s
 			@select_count = @select_count-results.length
 			results
 		end
 
 		def select_remainder
 			results = table.select(Dishwasher.state[:columns]).limit(@select_count).offset(Dishwasher.state[:offset])
-			puts "Result Size For " + table.to_s + ": " + results.length.to_s
 			@select_count = @select_count-results.length
 			results
 		end

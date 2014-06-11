@@ -85,7 +85,7 @@ module Dishwasher
 	def self.advance_table
 		puts "################################"
 		puts self.state
-		current = self.state[:klass].to_s
+		current = self.state[:klass]
 		next_table = tables.first
 		puts tables.to_yaml
 		current_index = tables.index(current)
