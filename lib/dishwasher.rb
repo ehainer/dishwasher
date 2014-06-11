@@ -50,8 +50,10 @@ module Dishwasher
 	end
 
 	def self.invoke_all_models
-		Dir.glob(File.expand_path("app/models/**/*", Rails.root)).each do |model_file|
-			require model_file
+		Dir.glob(File.expand_path("app/models/**/*.rb", Rails.root)).each do |model_file|
+			if model_file.end_with?(".rb")
+				require model_file
+			end
 		end
 	end
 
