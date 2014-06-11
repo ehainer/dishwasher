@@ -94,6 +94,8 @@ module Dishwasher
 		end
 		self.state[:klass] = next_table.constantize
 		self.state[:offset] = 0
+		puts "======================"
+		puts next_table
 		self.state[:columns] = get_columns(next_table)
 	end
 
@@ -111,7 +113,7 @@ module Dishwasher
 			tables.first
 		end
 
-		def self.get_columns(klass=nil)
+		def self.get_columns(klass)
 			wash = Dishwasher::Wash.where(table: klass.to_s).first
 			unless wash.nil?
 				return wash.columns.split(",")

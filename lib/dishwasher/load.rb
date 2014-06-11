@@ -66,7 +66,6 @@ module Dishwasher
 
 			if must_advance?
 				Dishwasher.advance_table
-				puts "HELLO"
 			end
 			data
 		end
