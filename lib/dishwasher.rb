@@ -85,6 +85,7 @@ module Dishwasher
 	def self.advance_table
 		current = self.state[:klass].to_s
 		next_table = tables.first
+		puts tables.to_yaml
 		current_index = tables.index(current)
 		unless current_index.nil?
 			current_index += 1
