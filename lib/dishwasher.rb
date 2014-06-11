@@ -92,7 +92,7 @@ module Dishwasher
 				next_table = tables[current_index]
 			end
 		end
-		self.state[:klass] = next_table
+		self.state[:klass] = next_table.constantize
 		self.state[:offset] = 0
 		self.state[:columns] = get_columns(next_table)
 	end
