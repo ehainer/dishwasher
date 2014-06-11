@@ -44,7 +44,7 @@ module Dishwasher
 
 		def must_advance?
 			total_rows = table.all.count
-			return true if Dishwasher.state[:offset] >= total_rows
+			return true if Dishwasher.state[:offset] >= total_rows && total_rows > 0
 			false
 		end
 

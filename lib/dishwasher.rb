@@ -67,7 +67,7 @@ module Dishwasher
 
 	def self.get_recent_state
 		load = Dishwasher::Load.order("created_at DESC").limit(1).first
-		wash = Dishwasher::Wash.where(table: load.klass).first
+		wash = Dishwasher::Wash.where(table: load.klass.to_s).first
 		return get_initial_state unless wash.nil?
 		build_state(load.klass, load.offset, wash.columns)
 	end
