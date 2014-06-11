@@ -10,7 +10,7 @@ module Dishwasher
 		end
 
 		def load_data
-			while has_results? do
+			while @select_count > 0 do
 				add_data(select_available)
 			end
 			@data.reject!{ |x| x[:content].nil? || x[:content].strip == "" }
