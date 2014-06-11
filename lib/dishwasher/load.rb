@@ -84,7 +84,7 @@ module Dishwasher
 
 		def select_remainder
 			results = table.select(Dishwasher.state[:columns]).limit(@select_count).offset(Dishwasher.state[:offset])
-			@select_count = @select_count-results.length
+			@select_count = @select_count-@select_count
 			results
 		end
 
