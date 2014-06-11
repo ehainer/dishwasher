@@ -60,6 +60,7 @@ module Dishwasher
 				data = select_remainder
 			end
 
+			puts "HELLO"
 			Dishwasher.state[:offset] += data.length
 
 			@select_count = 0 if data.length == 0
