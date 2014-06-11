@@ -79,11 +79,11 @@ module Dishwasher
 
 	def self.build_state(klass, offset, columns)
 		columns = columns.split(",") unless columns.kind_of?(Array)
-		{ klass: klass.constantize, offset: offset, columns: columns }
+		{ klass: klass.to_s, offset: offset, columns: columns }
 	end
 
 	def self.advance_table
-		current = self.state[:klass].to_s
+		current = self.state[:klass]
 		next_table = tables.first
 		current_index = tables.index(current)
 		unless current_index.nil?
@@ -92,7 +92,7 @@ module Dishwasher
 				next_table = tables[current_index]
 			end
 		end
-		self.state[:klass] = next_table.constantize
+		self.state[:klass] = next_table.to_s
 		self.state[:offset] = 0
 		self.state[:columns] = get_columns(next_table)
 	end
@@ -112,7 +112,7 @@ module Dishwasher
 		end
 
 		def self.get_columns(klass)
-			wash = Dishwasher::Wash.where(table: klass.to_s).first
+			wash = Dishwasher::Wash.where(table: klass).first
 			unless wash.nil?
 				return wash.columns.split(",")
 			end

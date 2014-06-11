@@ -88,7 +88,7 @@ module Dishwasher
 		end
 
 		def table
-			Dishwasher.state[:klass]
+			Dishwasher.state[:klass].constantize
 		end
 	end
 end
