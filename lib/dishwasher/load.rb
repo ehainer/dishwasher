@@ -10,7 +10,7 @@ module Dishwasher
 		end
 
 		def load_data
-			while @select_count > 0 do
+			while has_results? do
 				add_data(select_available)
 			end
 			@data.reject!{ |x| x[:content].nil? || x[:content].strip == "" }
@@ -66,6 +66,7 @@ module Dishwasher
 
 			if Dishwasher.tables.size == 1 && data.length == 0
 				@select_count = 0
+				return []
 			end
 
 			if must_advance?
