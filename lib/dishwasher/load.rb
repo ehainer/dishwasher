@@ -10,12 +10,8 @@ module Dishwasher
 		end
 
 		def load_data
-			begin
-				while has_results? do
-					add_data(select_available)
-				end
-			rescue Dishwasher::Suds => e
-				puts e.to_s
+			while has_results? do
+				add_data(select_available)
 			end
 			@data.reject!{ |x| x[:content].nil? || x[:content].strip == "" }
 		end
@@ -69,7 +65,6 @@ module Dishwasher
 			Dishwasher.state[:offset] += data.length
 
 			if Dishwasher.tables.size == 1 && data.length == 0
-			#	raise Dishwasher::Suds.new("Nothing to scan")
 			end
 
 			if must_advance?
