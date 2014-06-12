@@ -111,7 +111,7 @@ module Dishwasher
 			results.each do |result|
 				Dishwasher.state[:columns].each do |column|
 					if column.to_s != "id"
-						@data << { id: result[:id], klass: result.to_s, content: result[column] }
+						@data << { id: result[:id], klass: result.class.name.to_s, content: result[column] }
 					end
 				end
 				i += 1
