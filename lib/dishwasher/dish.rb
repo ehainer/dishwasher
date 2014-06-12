@@ -1,10 +1,10 @@
 module Dishwasher
 	class Dish < ActiveRecord::Base
-		def dirty
+		def self.dirty
 			where.not(status: 200)
 		end
 
-		def clean
+		def self.clean
 			where(status: 200)
 		end
 	end
