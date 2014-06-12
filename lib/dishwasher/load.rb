@@ -71,8 +71,8 @@ module Dishwasher
 					end
 
 					dish = Dishwasher::Dish.find_or_initialize_by(url: url.to_s, klass: record[:klass], record_id: record[:id]) do |dish|
-						dish.status = code
-						dish.updated_at = Time.now
+						dish.update_attribute(:status, code)
+						dish.update_attribute(:updated_at, Time.now)
 						dish.save
 					end
 				end
