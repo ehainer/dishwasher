@@ -43,7 +43,7 @@ module Dishwasher
 			def init_whenever
 				system("cd #{Rails.root} && wheneverize .")
 				contents = File.read(File.expand_path("config/schedule.rb", Rails.root))
-				unless contents.grep(/Dishwasher\.run/).size > 0
+				unless contents =~ /Dishwasher\.run/
 					File.open(File.expand_path("config/schedule.rb", Rails.root), "a+"){ |f|
 						f << "\r\nevery #{(Dishwasher.tick_interval.to_i/60).to_s}.minutes do\r\n\trunner \"Dishwasher.run\"\r\nend\r\n"
 						f.close
