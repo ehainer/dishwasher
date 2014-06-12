@@ -77,9 +77,10 @@ module Dishwasher
 			ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36"
 			url = URI.parse(uri_str)
 			req = Net::HTTP::Get.new(url.path, { 'User-Agent' => ua })
-			response = Net::HTTP.start(url.host, url.port) { |http| http.request(req)
+			response = Net::HTTP.start(url.host, url.port) { |http|
 				http.open_timeout = 10
 				http.read_timeout = 10
+				http.request(req)
 			}
 			case response
 				when Net::HTTPSuccess then
