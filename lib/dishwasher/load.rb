@@ -79,7 +79,7 @@ module Dishwasher
 			req = Net::HTTP::Get.new(url.path, { 'User-Agent' => ua })
 			response = Net::HTTP.start(url.host, url.port) { |http|
 				http.open_timeout = 10
-				http.read_timeout = 10
+				http.read_timeout = 30
 				http.request(req)
 			}
 			case response
