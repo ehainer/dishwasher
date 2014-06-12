@@ -56,7 +56,6 @@ module Dishwasher
 
 					if recent_lookup == false
 						begin
-							puts "FETCHING: " + url.to_s
 							response = fetch(url)
 							code = response.code
 						rescue Dishwasher::Suds => e
@@ -71,8 +70,9 @@ module Dishwasher
 						code = recent_lookup.status
 					end
 
-					Dishwasher::Dish.find_or_initialize_by(url: url.to_s, klass: record[:klass], record_id: record[:id]) do |dish|
+					dish = Dishwasher::Dish.find_or_initialize_by(url: url.to_s, klass: record[:klass], record_id: record[:id]) do |dish|
 						dish.status = code
+						dish.updated_at = Time.now
 						dish.save
 					end
 				end
