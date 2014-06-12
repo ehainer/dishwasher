@@ -43,6 +43,10 @@ module Dishwasher
 					url = "http://" + url
 				end
 
+				if url =~ /\.[a-z]+$/i
+					url += "/"
+				end
+
 				begin
 					response = fetch(url)
 					unless url.to_s.strip == ""
