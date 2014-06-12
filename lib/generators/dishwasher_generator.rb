@@ -1,4 +1,5 @@
 require 'rails/generators/base'
+require 'rails/generators/actions'
 require 'rails/generators/migration'
 require 'generators/orm_helpers'
 require 'fileutils'
@@ -8,6 +9,7 @@ module Dishwasher
 		class DishwasherGenerator < Rails::Generators::Base
 			include Dishwasher::Generators::OrmHelpers
 			include Rails::Generators::Migration
+			include Rails::Generators::Actions
 
 			source_root File.expand_path("templates", File.dirname(__FILE__))
 
@@ -28,6 +30,7 @@ module Dishwasher
 			def copy_controllers
 				unless File.exist?(File.expand_path("app/controllers/dishwasher_controller.rb", Rails.root))
 					copy_file "controllers/dishwasher_controller.rb", "app/controllers/dishwasher_controller.rb"
+					route "get '/dishwasher', to: 'dishwasher#index'"
 				end
 			end
 
