@@ -42,15 +42,15 @@ module Dishwasher
 
 			def init_whenever
 				exec("cd #{Rails.root} && wheneverize .")
-				#unless File.readlines(File.expand_path("config/schedule.rb", Rails.root)).grep(/Dishwasher\.run/).size > 0
-					File.open(File.expand_path("config/schedule.rb", Rails.root), "a+") do |f|
+				unless File.readlines(File.expand_path("config/schedule.rb", Rails.root)).grep(/Dishwasher\.run/).size > 0
+					File.open(File.expand_path("config/schedule.rb", Rails.root), "a+"){ |f|
 						f << "\r\n"
 						f << "every #{(Dishwasher.tick_interval.to_i/60).to_s}.minutes do"
 						f << "\trunner \"Dishwasher.run\""
 						f << "end"
 						f.close
-					end
-				#end
+					}
+				end
 				exec("cd #{Rails.root} && whenever --update-crontab")
 			end
 
