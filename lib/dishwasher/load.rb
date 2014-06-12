@@ -73,7 +73,7 @@ module Dishwasher
 						dish.status = code
 						dish.save
 					end
-					puts url + " / " + code
+					puts url + " / " + code.to_s
 				end
 			end
 		end
