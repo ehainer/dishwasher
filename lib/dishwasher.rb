@@ -6,6 +6,9 @@ module Dishwasher
 	mattr_accessor :chunk_size
 	@@chunk_size = 20
 
+	mattr_accessor :tick_interval
+	@@tick_interval = 10.minutes
+
 	mattr_accessor :state
 	@@state = {}
 
