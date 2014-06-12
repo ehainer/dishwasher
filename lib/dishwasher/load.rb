@@ -52,6 +52,7 @@ module Dishwasher
 						end
 					end
 				rescue Dishwasher::Suds => e
+					puts url
 					puts e.to_s
 				rescue Exception => e
 					puts e.to_s
