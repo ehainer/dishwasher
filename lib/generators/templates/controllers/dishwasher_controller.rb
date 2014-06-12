@@ -1,5 +1,5 @@
 class DishwasherController < ApplicationController
 	def index
-		@dishes = Dishwasher::Dish.where.not(status: 200)
+		@dishes = Dishwasher::Dish.dirty
 	end
 end
