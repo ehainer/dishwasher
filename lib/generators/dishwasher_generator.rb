@@ -1,6 +1,7 @@
 require 'rails/generators/base'
 require 'rails/generators/migration'
 require 'generators/orm_helpers'
+require 'fileutils'
 
 module Dishwasher
 	module Generators
@@ -16,11 +17,24 @@ module Dishwasher
 
 			def copy_migrations
 				unless migration_exists?
-					copy_file "dishwasher_loads.rb", "db/migrate/#{migration_version}_create_dishwasher_loads.rb"
-					copy_file "dishwasher_washes.rb", "db/migrate/#{migration_version}_create_dishwasher_washes.rb"
-					copy_file "dishwasher_dishes.rb", "db/migrate/#{migration_version}_create_dishwasher_dishes.rb"
+					copy_file "migrations/dishwasher_loads.rb", "db/migrate/#{migration_version}_create_dishwasher_loads.rb"
+					copy_file "migrations/dishwasher_washes.rb", "db/migrate/#{migration_version}_create_dishwasher_washes.rb"
+					copy_file "migrations/dishwasher_dishes.rb", "db/migrate/#{migration_version}_create_dishwasher_dishes.rb"
 
 					rake "db:migrate"
+				end
+			end
+
+			def copy_controllers
+				unless File.exist?(File.expand_path("app/controllers/dishwasher_controller.rb", Rails.root))
+					copy_file "controllers/dishwasher_controller.rb", "app/controllers/dishwasher_controller.rb"
+				end
+			end
+
+			def copy_views
+				unless File.exist?(File.expand_path("app/views/dishwasher/index.html.erb", Rails.root))
+					FileUtils.mkdir_p(File.expand_path("app/views/dishwasher", Rails.root))
+					copy_file "views/index.html.erb", "app/views/dishwasher/index.html.erb"
 				end
 			end
 

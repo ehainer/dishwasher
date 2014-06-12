@@ -1,0 +1,21 @@
+<h1>Listing Scanned URLs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Url</th>
+      <th>Status</th>
+      <th>Last Scanned</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @dishes.each do |dish| %>
+      <tr>
+        <td><a href="<%= dish.url %>" target="_blank"><%= dish.url %></a></td>
+        <td><%= dish.status %></td>
+        <td><%= dish.updated_at.strftime("%B %-m, %Y %-l:%M %P") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

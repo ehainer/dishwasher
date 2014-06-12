@@ -4,6 +4,9 @@ require "dishwasher/dish"
 
 module Dishwasher
 	class Load < ActiveRecord::Base
+
+		DEFAULT_STATUS = 500
+
 		def start
 			@data ||= []
 			@select_count = Dishwasher.chunk_size
@@ -45,27 +48,17 @@ module Dishwasher
 
 				url += "/" if url =~ /\.[a-z]+$/i
 
-				code = 500
+				code = DEFAULT_STATUS
 
 				begin
 					response = fetch(url)
 					code = response.code
 				rescue Dishwasher::Suds => e
-					puts "========= Suds =========="
-					puts url
-					puts e.to_s
 				rescue Net::OpenTimeout => e
 					code = 504
-					puts "========= Open Timeout =========="
-					puts url
 				rescue Net::ReadTimeout => e
 					code = 504
-					puts "========= Read Timeout =========="
-					puts url
 				rescue Exception => e
-					puts "========= Exception =========="
-					puts url
-					puts e.to_s
 					code = 404 if e.to_s.include?("404")
 				end
 
@@ -74,7 +67,6 @@ module Dishwasher
 						dish.status = code
 						dish.save
 					end
-					puts url + " / " + code.to_s
 				end
 			end
 		end
@@ -83,7 +75,6 @@ module Dishwasher
 			raise Dishwasher::Suds.new("Redirect limit reached") if limit == 0
 
 			ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36"
-			#url = URI.parse(uri_str)
 
 			uri = URI.parse(uri_str)
 			http = Net::HTTP.new(uri.host, uri.port)
@@ -108,15 +99,6 @@ module Dishwasher
 				else
 					response.error!
 			end
-
-			#req = Net::HTTP::Get.new(url.path, { 'User-Agent' => ua })
-			#response = Net::HTTP.start(url.host, url.port) { |http|
-			#	http.open_timeout = 10
-			#	http.read_timeout = 10
-			#	http.use_ssl = true if uri_str.start_with?("https")
-			#	http.verify_mode = OpenSSL::SSL::VERIFY_NONE if uri_str.start_with?("https")
-			#	http.request(req)
-			#}
 		end
 
 		def add_data(results)
