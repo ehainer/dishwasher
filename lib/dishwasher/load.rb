@@ -45,30 +45,35 @@ module Dishwasher
 
 				url += "/" if url =~ /\.[a-z]+$/i
 
+				code = 500
+
 				begin
 					response = fetch(url)
-					unless url.to_s.strip == ""
-						Dishwasher::Dish.find_or_initialize_by(url: url.to_s) do |dish|
-							dish.status = response.code
-							dish.save
-						end
-						puts "========= Success =========="
-						puts url + " / " + response.code
-					end
+					code = response.code
 				rescue Dishwasher::Suds => e
 					puts "========= Suds =========="
 					puts url
 					puts e.to_s
 				rescue Net::OpenTimeout => e
+					code = 504
 					puts "========= Open Timeout =========="
 					puts url
 				rescue Net::ReadTimeout => e
+					code = 504
 					puts "========= Read Timeout =========="
 					puts url
 				rescue Exception => e
 					puts "========= Exception =========="
 					puts url
 					puts e.to_s
+				end
+
+				unless url.to_s.strip == ""
+					Dishwasher::Dish.find_or_initialize_by(url: url.to_s) do |dish|
+						dish.status = code
+						dish.save
+					end
+					puts url + " / " + response.code
 				end
 			end
 		end
