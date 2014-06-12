@@ -66,6 +66,7 @@ module Dishwasher
 					puts "========= Exception =========="
 					puts url
 					puts e.to_s
+					code = 404 if e.to_s.include?("404")
 				end
 
 				unless url.to_s.strip == ""
