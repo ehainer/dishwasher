@@ -52,6 +52,8 @@ module Dishwasher
 							dish.status = response.code
 							dish.save
 						end
+						puts "========= Success =========="
+						puts url + " / " + response.code
 					end
 				rescue Dishwasher::Suds => e
 					puts "========= Suds =========="
@@ -79,14 +81,20 @@ module Dishwasher
 			req = Net::HTTP::Get.new(url.path, { 'User-Agent' => ua })
 			response = Net::HTTP.start(url.host, url.port) { |http|
 				http.open_timeout = 10
-				http.read_timeout = 30
+				http.read_timeout = 10
+				http.use_ssl = true if uri_str.start_with?("https")
+				http.verify_mode = OpenSSL::SSL::VERIFY_NONE if uri_str.start_with?("https")
 				http.request(req)
 			}
 			case response
 				when Net::HTTPSuccess then
 					response
 				when Net::HTTPRedirection then
-					fetch(response['location'], limit-1)
+					if response['location'].nil?
+						fetch(response.body.match(/<a href=\"([^>]+)\">/i)[1], limit-1)
+					else
+						fetch(response['location'], limit-1)
+					end
 				else
 					response.error!
 			end
