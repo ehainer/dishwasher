@@ -52,9 +52,12 @@ module Dishwasher
 						end
 					end
 				rescue Dishwasher::Suds => e
+					puts "========= Suds =========="
 					puts url
 					puts e.to_s
 				rescue Exception => e
+					puts "========= Exception =========="
+					puts url
 					puts e.to_s
 				end
 			end
