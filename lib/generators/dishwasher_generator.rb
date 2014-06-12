@@ -25,8 +25,8 @@ module Dishwasher
 			end
 
 			def migration_version
-				version = Time.now.utc.strftime("%Y%m%d%H%M%S").to_s
-				while Dir.glob(File.expand_path("db/migrate/#{version}_*", Rails.root)).length > 0
+				version = Time.now.utc.strftime("%Y%m%d%H%M%S").to_i
+				while Dir.glob(File.expand_path("db/migrate/#{version.to_s}_*", Rails.root)).length > 0
 					version = version+1
 				end
 				@migration_version = version
