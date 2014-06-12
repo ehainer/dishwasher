@@ -109,9 +109,9 @@ module Dishwasher
 		end
 
 		def find_recent_lookup(url)
-			dish = Dishwasher::Dish.where(url: url).where("updated_at > ?", 10.minutes.ago)
-			if dish.count > 0
-				dish.first
+			dish = Dishwasher::Dish.where(url: url).where("updated_at > ?", 10.minutes.ago).first
+			unless dish.nil?
+				dish
 			else
 				false
 			end
