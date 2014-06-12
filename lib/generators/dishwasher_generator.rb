@@ -28,7 +28,7 @@ module Dishwasher
 				@migration_version ||= Time.now.utc.strftime("%Y%m%d%H%M%S").to_i
 				version = Time.now.utc.strftime("%Y%m%d%H%M%S").to_i
 				while version.to_i == @migration_version.to_i
-					version += 1
+					version = version+10
 				end
 				@migration_version = version
 				@migration_version.to_s
