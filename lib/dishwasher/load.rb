@@ -29,7 +29,7 @@ module Dishwasher
 			@data.each do |record|
 				matches = record[:content].scan(regexp)
 				if matches.length > 0
-					urls << { urls: matches, id: record[:id], klass: record[:klass] }
+					urls << { urls: matches.flatten, id: record[:id], klass: record[:klass] }
 				end
 			end
 			urls
