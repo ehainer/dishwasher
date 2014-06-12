@@ -14,7 +14,9 @@ module Dishwasher
 			source_root File.expand_path("templates", File.dirname(__FILE__))
 
 			def copy_initializer
-				template "dishwasher_config.rb", "config/initializers/dishwasher.rb"
+				unless File.exist?(File.expand_path("config/initializers/dishwasher.rb", Rails.root))
+					template "dishwasher_config.rb", "config/initializers/dishwasher.rb"
+				end
 			end
 
 			def copy_migrations
