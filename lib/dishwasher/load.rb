@@ -77,15 +77,19 @@ module Dishwasher
 			raise Dishwasher::Suds.new("Redirect limit reached") if limit == 0
 
 			ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36"
-			url = URI.parse(uri_str)
-			req = Net::HTTP::Get.new(url.path, { 'User-Agent' => ua })
-			response = Net::HTTP.start(url.host, url.port) { |http|
-				http.open_timeout = 10
-				http.read_timeout = 10
-				http.use_ssl = true if uri_str.start_with?("https")
-				http.verify_mode = OpenSSL::SSL::VERIFY_NONE if uri_str.start_with?("https")
-				http.request(req)
-			}
+			#url = URI.parse(uri_str)
+
+			uri = URI.parse(uri_str)
+			http = Net::HTTP.new(uri.host, uri.port)
+			http.open_timeout = 10
+			http.read_timeout = 10
+			http.use_ssl = true if uri.scheme == 'https'
+
+			response = http.start do
+				request = Net::HTTP::Get.new(uri.request_uri, { 'User-Agent' => ua })
+				http.request(request)
+			end
+
 			case response
 				when Net::HTTPSuccess then
 					response
@@ -98,6 +102,15 @@ module Dishwasher
 				else
 					response.error!
 			end
+
+			#req = Net::HTTP::Get.new(url.path, { 'User-Agent' => ua })
+			#response = Net::HTTP.start(url.host, url.port) { |http|
+			#	http.open_timeout = 10
+			#	http.read_timeout = 10
+			#	http.use_ssl = true if uri_str.start_with?("https")
+			#	http.verify_mode = OpenSSL::SSL::VERIFY_NONE if uri_str.start_with?("https")
+			#	http.request(req)
+			#}
 		end
 
 		def add_data(results)
