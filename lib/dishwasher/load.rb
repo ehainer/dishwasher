@@ -43,9 +43,7 @@ module Dishwasher
 					url = "http://" + url
 				end
 
-				if url =~ /\.[a-z]+$/i
-					url += "/"
-				end
+				url += "/" if url =~ /\.[a-z]+$/i
 
 				begin
 					response = fetch(url)
@@ -59,6 +57,12 @@ module Dishwasher
 					puts "========= Suds =========="
 					puts url
 					puts e.to_s
+				rescue Net::OpenTimeout => e
+					puts "========= Open Timeout =========="
+					puts url
+				rescue Net::ReadTimeout => e
+					puts "========= Read Timeout =========="
+					puts url
 				rescue Exception => e
 					puts "========= Exception =========="
 					puts url
@@ -70,8 +74,11 @@ module Dishwasher
 		def fetch(uri_str, limit = 10)
 			raise Dishwasher::Suds.new("Redirect limit reached") if limit == 0
 
+			ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36"
 			url = URI.parse(uri_str)
-			req = Net::HTTP::Get.new(url.path)
+			req = Net::HTTP::Get.new(url.path, { 'User-Agent' => ua })
+			req.open_timeout = 5
+			req.read_timeout = 5
 			response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
 			case response
 				when Net::HTTPSuccess then
