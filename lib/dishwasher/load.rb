@@ -46,24 +46,28 @@ module Dishwasher
 		def check_urls(records)
 			records.each do |record|
 				record[:urls].each do |url|
-					if !url.start_with?("http://") && !url.start_with?("https://")
-						url = "http://" + url
-					end
 
+					url = "http://" + url if !url.start_with?("http://") && !url.start_with?("https://")
 					url += "/" if url =~ /\.[a-z]+$/i
 
 					code = DEFAULT_STATUS
 
-					begin
-						response = fetch(url)
-						code = response.code
-					rescue Dishwasher::Suds => e
-					rescue Net::OpenTimeout => e
-						code = 504
-					rescue Net::ReadTimeout => e
-						code = 504
-					rescue Exception => e
-						code = 404 if e.to_s.include?("404")
+					recent_lookup = find_recent_lookup(url)
+
+					if recent_lookup == false
+						begin
+							response = fetch(url)
+							code = response.code
+						rescue Dishwasher::Suds => e
+						rescue Net::OpenTimeout => e
+							code = 504
+						rescue Net::ReadTimeout => e
+							code = 504
+						rescue Exception => e
+							code = 404 if e.to_s.include?("404")
+						end
+					else
+						code = recent_lookup.status
 					end
 
 					unless url.to_s.strip == ""
@@ -103,6 +107,15 @@ module Dishwasher
 					end
 				else
 					response.error!
+			end
+		end
+
+		def find_recent_lookup(url)
+			dish = Dishwasher::Dish.find_by(url: url).where("updated_at > ?", 10.minutes.ago)
+			if dish.count > 0
+				dish.first
+			else
+				false
 			end
 		end
 
