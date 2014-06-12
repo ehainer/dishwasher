@@ -43,19 +43,35 @@ module Dishwasher
 					url = "http://" + url
 				end
 
-				uri = URI.parse(url)
-
-				http = Net::HTTP.new(uri.host, uri.port)
-				request = Net::HTTP::Get.new(uri.request_uri)
-
-				response = http.request(request)
-
-				unless url.to_s.strip == ""
-					Dishwasher::Dish.find_or_initialize_by(url: url.to_s) do |dish|
-						dish.status = response.code
-						dish.save
+				begin
+					response = fetch(url)
+					unless url.to_s.strip == ""
+						Dishwasher::Dish.find_or_initialize_by(url: url.to_s) do |dish|
+							dish.status = response.code
+							dish.save
+						end
 					end
+				rescue Dishwasher::Suds => e
+					puts e.to_s
+				rescue Exception => e
+					puts e.to_s
 				end
+			end
+		end
+
+		def fetch(uri_str, limit = 10)
+			raise Dishwasher::Suds.new("Redirect limit reached") if limit == 0
+
+			url = URI.parse(uri_str)
+			req = Net::HTTP::Get.new(url.path, { 'User-Agent' => ua })
+			response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
+			case response
+				when Net::HTTPSuccess then
+					response
+				when Net::HTTPRedirection then
+					fetch(response['location'], limit-1)
+				else
+					response.error!
 			end
 		end
 
