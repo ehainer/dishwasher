@@ -28,9 +28,7 @@ module Dishwasher
 	end
 
 	def self.run
-		puts ""
-		puts ""
-		puts "Running Dishwasher..."
+		puts "Running Dishwasher... Aww Shit."
 		begin
 			invoke_all_models
 			can_do_dishes?
@@ -41,7 +39,6 @@ module Dishwasher
 			puts "Dishwasher Failed! " + e.to_s
 		end
 		puts "Dishwasher Stopped"
-		puts ""
 		puts ""
 	end
 
@@ -68,7 +65,7 @@ module Dishwasher
 	def self.get_recent_state
 		load = Dishwasher::Load.order("created_at DESC").limit(1).first
 		wash = Dishwasher::Wash.where(table: load.klass.to_s).first
-		return get_initial_state unless wash.nil?
+		return get_initial_state if wash.nil?
 		build_state(load.klass, load.offset, wash.columns)
 	end
 

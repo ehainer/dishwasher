@@ -1,12 +1,16 @@
+require "net/http"
+require "uri"
+require "dishwasher/dish"
+
 module Dishwasher
 	class Load < ActiveRecord::Base
-		@select_count = 20
-
 		def start
 			@data ||= []
 			@select_count = Dishwasher.chunk_size
 			load_data
 			update_load
+			urls = parse_data
+			check_urls(urls)
 		end
 
 		def load_data
@@ -16,12 +20,39 @@ module Dishwasher
 			@data.reject!{ |x| x[:content].nil? || x[:content].strip == "" }
 		end
 
+		def parse_data
+			urls = []
+			regexp = /(?i)\b((?:https?:(?:\/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:(?<!@)[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\b\/?(?!@)))/i
+			@data.each do |record|
+				urls =  urls | record[:content].scan(regexp)
+			end
+			urls.uniq.flatten
+		end
+
 		def update_load
 			@data ||= []
 			self[:klass] = @data.length > 0 ? @data.last[:klass] : Dishwasher.state[:klass]
 			self[:offset] = Dishwasher.state[:offset]
 			self.save
 			self
+		end
+
+		def check_urls(urls)
+			urls.each do |url|
+				uri = URI.parse(url)
+
+				http = Net::HTTP.new(uri.host, uri.port)
+				request = Net::HTTP::Get.new(uri.request_uri)
+
+				response = http.request(request)
+
+				unless url.to_s.strip == ""
+					Dishwasher::Dish.find_or_initialize_by(url: url.to_s) do |dish|
+						dish.status = response.code
+						dish.save
+					end
+				end
+			end
 		end
 
 		def add_data(results)
@@ -76,13 +107,13 @@ module Dishwasher
 		end
 
 		def select_all
-			results = table.select(Dishwasher.state[:columns]).offset(Dishwasher.state[:offset])
+			results = table.select(:id, Dishwasher.state[:columns]).offset(Dishwasher.state[:offset])
 			@select_count = @select_count-results.length
 			results
 		end
 
 		def select_remainder
-			results = table.select(Dishwasher.state[:columns]).limit(@select_count).offset(Dishwasher.state[:offset])
+			results = table.select(:id, Dishwasher.state[:columns]).limit(@select_count).offset(Dishwasher.state[:offset])
 			@select_count = @select_count-results.length
 			results
 		end
