@@ -70,11 +70,9 @@ module Dishwasher
 						code = recent_lookup.status
 					end
 
-					unless url.to_s.strip == ""
-						Dishwasher::Dish.find_or_initialize_by(url: url.to_s, klass: record[:klass], record_id: record[:id]) do |dish|
-							dish.status = code
-							dish.save
-						end
+					Dishwasher::Dish.find_or_initialize_by(url: url.to_s, klass: record[:klass], record_id: record[:id]) do |dish|
+						dish.status = code
+						dish.save
 					end
 				end
 			end
