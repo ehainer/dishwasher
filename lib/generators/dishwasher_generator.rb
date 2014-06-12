@@ -22,7 +22,6 @@ module Dishwasher
 					copy_file "migrations/dishwasher_loads.rb", "db/migrate/#{migration_version}_create_dishwasher_loads.rb"
 					copy_file "migrations/dishwasher_washes.rb", "db/migrate/#{migration_version}_create_dishwasher_washes.rb"
 					copy_file "migrations/dishwasher_dishes.rb", "db/migrate/#{migration_version}_create_dishwasher_dishes.rb"
-
 					rake "db:migrate"
 				end
 			end
