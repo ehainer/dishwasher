@@ -56,6 +56,7 @@ module Dishwasher
 
 					if recent_lookup == false
 						begin
+							puts "FETCHING: " + url.to_s
 							response = fetch(url)
 							code = response.code
 						rescue Dishwasher::Suds => e
