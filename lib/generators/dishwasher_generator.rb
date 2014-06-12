@@ -45,9 +45,9 @@ module Dishwasher
 				unless File.readlines(File.expand_path("config/schedule.rb", Rails.root)).grep(/Dishwasher\.run/).size > 0
 					File.open(File.expand_path("config/schedule.rb", Rails.root), "a+"){ |f|
 						f << "\r\n"
-						f << "every #{(Dishwasher.tick_interval.to_i/60).to_s}.minutes do"
-						f << "\trunner \"Dishwasher.run\""
-						f << "end"
+						f << "every #{(Dishwasher.tick_interval.to_i/60).to_s}.minutes do\r\n"
+						f << "\trunner \"Dishwasher.run\"\r\n"
+						f << "end\r\n"
 						f.close
 					}
 				end
