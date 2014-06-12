@@ -41,7 +41,8 @@ module Dishwasher
 			end
 
 			def init_whenever
-				exec("cd #{Rails.root} && wheneverize .")
+				command = "cd #{Rails.root} && wheneverize ."
+				%x(command)
 				unless File.readlines(File.expand_path("config/schedule.rb", Rails.root)).grep(/Dishwasher\.run/).size > 0
 					File.open(File.expand_path("config/schedule.rb", Rails.root), "a+"){ |f|
 						f << "\r\n"
