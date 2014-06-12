@@ -18,5 +18,6 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "dishwasher"
   s.rubygems_version = "2.1.11"
   s.summary = "Periodically check links in database fields for connection errors."
-  s.add_runtime_dependency "echoe", "whenever"
+  s.add_runtime_dependency "echoe"
+  s.add_runtime_dependency "whenever"
 end
