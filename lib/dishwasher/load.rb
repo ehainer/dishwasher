@@ -73,7 +73,7 @@ module Dishwasher
 					dish = Dishwasher::Dish.find_or_initialize_by(url: url.to_s, klass: record[:klass], record_id: record[:id]) do |dish|
 						dish.update_attribute(:status, code)
 						dish.update_attribute(:updated_at, Time.now)
-						dish.save
+						dish.save!
 					end
 				end
 			end
@@ -110,7 +110,7 @@ module Dishwasher
 		end
 
 		def find_recent_lookup(url)
-			dish = Dishwasher::Dish.where(url: url).where("updated_at > ?", 10.minutes.ago).first
+			dish = Dishwasher::Dish.where(url: url).where("updated_at > ?", 1.minute.ago).first
 			unless dish.nil?
 				dish
 			else
