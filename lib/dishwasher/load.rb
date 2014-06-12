@@ -39,6 +39,10 @@ module Dishwasher
 
 		def check_urls(urls)
 			urls.each do |url|
+				if !url.start_with?("http://") && !url.start_with?("https://")
+					url = "http://" + url
+				end
+
 				uri = URI.parse(url)
 
 				http = Net::HTTP.new(uri.host, uri.port)
