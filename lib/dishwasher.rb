@@ -67,14 +67,14 @@ module Dishwasher
 
 	def self.get_recent_state
 		load = Dishwasher::Load.order("created_at DESC").limit(1).first
-		wash = Dishwasher::Wash.where(table: load.klass.to_s).first
+		wash = Dishwasher::Wash.where(klass: load.klass.to_s).first
 		return get_initial_state if wash.nil?
 		build_state(load.klass, load.offset, wash.columns)
 	end
 
 	def self.get_initial_state
 		wash = Dishwasher::Wash.all.first
-		build_state(wash[:table], 0, wash[:columns])
+		build_state(wash[:klass], 0, wash[:columns])
 	end
 
 	def self.build_state(klass, offset, columns)
@@ -104,7 +104,7 @@ module Dishwasher
 	private
 
 		def self.tables
-			Dishwasher::Wash.select(:table).map(&:table)
+			Dishwasher::Wash.select(:klass).map(&:klass)
 		end
 
 		def self.get_table
@@ -112,7 +112,7 @@ module Dishwasher
 		end
 
 		def self.get_columns(klass)
-			wash = Dishwasher::Wash.where(table: klass).first
+			wash = Dishwasher::Wash.where(klass: klass).first
 			unless wash.nil?
 				return wash.columns.split(",")
 			end
