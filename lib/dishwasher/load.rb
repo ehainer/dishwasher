@@ -169,13 +169,15 @@ module Dishwasher
 		end
 
 		def select_all
-			results = table.select(:id, Dishwasher.state[:columns]).offset(Dishwasher.state[:offset])
+			to_select = [:id] | Dishwasher.state[:columns]
+			results = table.select(to_select.flatten).offset(Dishwasher.state[:offset])
 			@select_count = @select_count-results.length
 			results
 		end
 
 		def select_remainder
-			results = table.select(:id, Dishwasher.state[:columns]).limit(@select_count).offset(Dishwasher.state[:offset])
+			to_select = [:id] | Dishwasher.state[:columns]
+			results = table.select(to_select.flatten).limit(@select_count).offset(Dishwasher.state[:offset])
 			@select_count = @select_count-results.length
 			results
 		end
