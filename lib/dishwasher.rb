@@ -9,7 +9,7 @@ module Dishwasher
 	mattr_accessor :tick_interval
 	@@tick_interval = 10.minutes
 
-	mattr_accessor :state
+	mattr_accessor :dish_state
 	@@state = {}
 
 	def self.included(base)
@@ -59,9 +59,9 @@ module Dishwasher
 
 	def self.init_state
 		if has_recent_load?
-			self.state = get_recent_state
+			self.dish_state = get_recent_state
 		else
-			self.state = get_initial_state
+			self.dish_state = get_initial_state
 		end
 	end
 
@@ -83,7 +83,7 @@ module Dishwasher
 	end
 
 	def self.advance_table
-		current = self.state[:klass]
+		current = self.dish_state[:klass]
 		next_table = tables.first
 		current_index = tables.index(current)
 		unless current_index.nil?
@@ -92,9 +92,9 @@ module Dishwasher
 				next_table = tables[current_index]
 			end
 		end
-		self.state[:klass] = next_table.to_s
-		self.state[:offset] = 0
-		self.state[:columns] = get_columns(next_table)
+		self.dish_state[:klass] = next_table.to_s
+		self.dish_state[:offset] = 0
+		self.dish_state[:columns] = get_columns(next_table)
 	end
 
 	def self.can_do_dishes?

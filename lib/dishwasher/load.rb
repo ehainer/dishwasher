@@ -37,8 +37,8 @@ module Dishwasher
 
 		def update_load
 			@data ||= []
-			self[:klass] = @data.length > 0 ? @data.last[:klass] : Dishwasher.state[:klass]
-			self[:offset] = Dishwasher.state[:offset]
+			self[:klass] = @data.length > 0 ? @data.last[:klass] : Dishwasher.dish_state[:klass]
+			self[:offset] = Dishwasher.dish_state[:offset]
 			self.save
 			self
 		end
@@ -120,7 +120,7 @@ module Dishwasher
 		def add_data(results)
 			i = 1
 			results.each do |result|
-				Dishwasher.state[:columns].each do |column|
+				Dishwasher.dish_state[:columns].each do |column|
 					if column.to_s != "id"
 						@data << { id: result[:id], klass: result.class.name.to_s, content: result[column] }
 					end
@@ -133,13 +133,13 @@ module Dishwasher
 		def can_select_all?
 			@select_count ||= Dishwasher.chunk_size
 			total_rows = table.all.count
-			return true if @select_count+Dishwasher.state[:offset] > total_rows && total_rows > 0
+			return true if @select_count+Dishwasher.dish_state[:offset] > total_rows && total_rows > 0
 			false
 		end
 
 		def must_advance?
 			total_rows = table.all.count
-			return true if Dishwasher.state[:offset] >= total_rows && total_rows > 0
+			return true if Dishwasher.dish_state[:offset] >= total_rows && total_rows > 0
 			false
 		end
 
@@ -155,7 +155,7 @@ module Dishwasher
 				data = select_remainder
 			end
 
-			Dishwasher.state[:offset] += data.length
+			Dishwasher.dish_state[:offset] += data.length
 
 			if Dishwasher.tables.size == 1 && data.length == 0
 				@select_count = 0
@@ -169,21 +169,21 @@ module Dishwasher
 		end
 
 		def select_all
-			to_select = [:id] | Dishwasher.state[:columns]
-			results = table.select(to_select.flatten).offset(Dishwasher.state[:offset])
+			to_select = [:id] | Dishwasher.dish_state[:columns]
+			results = table.select(to_select.flatten).offset(Dishwasher.dish_state[:offset])
 			@select_count = @select_count-results.length
 			results
 		end
 
 		def select_remainder
-			to_select = [:id] | Dishwasher.state[:columns]
-			results = table.select(to_select.flatten).limit(@select_count).offset(Dishwasher.state[:offset])
+			to_select = [:id] | Dishwasher.dish_state[:columns]
+			results = table.select(to_select.flatten).limit(@select_count).offset(Dishwasher.dish_state[:offset])
 			@select_count = @select_count-results.length
 			results
 		end
 
 		def table
-			Dishwasher.state[:klass].constantize
+			Dishwasher.dish_state[:klass].constantize
 		end
 	end
 end
