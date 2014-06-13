@@ -70,7 +70,11 @@ module Dishwasher
 						code = recent_lookup.status
 					end
 
-					dish = Dishwasher::Dish.find_or_initialize_by(url: url.to_s, klass: record[:klass], record_id: record[:id])
+					if Rails::VERSION::MAJOR.to_i >= 4
+						dish = Dishwasher::Dish.find_or_initialize_by(url: url.to_s, klass: record[:klass], record_id: record[:id])
+					else
+						dish = Dishwasher::Dish.find_or_initialize_by_url_and_klass_and_record_id(url.to_s, record[:klass], record[:id])
+					end
 					dish.status = code
 					dish.updated_at = Time.now
 					dish.save
