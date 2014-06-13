@@ -59,6 +59,8 @@ module Dishwasher
 							response = fetch(url)
 							code = response.code
 						rescue Dishwasher::Suds => e
+						rescue Timeout::Error => e
+							code = 504
 						rescue Net::OpenTimeout => e
 							code = 504
 						rescue Net::ReadTimeout => e
