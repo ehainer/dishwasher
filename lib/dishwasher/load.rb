@@ -61,10 +61,6 @@ module Dishwasher
 						rescue Dishwasher::Suds => e
 						rescue Timeout::Error => e
 							code = 504
-						rescue Net::OpenTimeout => e
-							code = 504
-						rescue Net::ReadTimeout => e
-							code = 504
 						rescue Exception => e
 							code = 404 if e.to_s.include?("404")
 						end
