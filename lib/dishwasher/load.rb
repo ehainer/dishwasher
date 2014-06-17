@@ -176,6 +176,7 @@ module Dishwasher
 			@select_count = @select_count-results.length
 			results
 		end
+		
 
 		def select_remainder
 			to_select = [:id] | Dishwasher.dish_state[:columns]
