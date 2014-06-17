@@ -12,13 +12,19 @@
   </thead>
 
   <tbody>
-    <% @dishes.each do |dish| %>
+    <% if @dishes.size > 0 %>
+      <% @dishes.each do |dish| %>
       <tr>
         <td><a href="<%= dish.url %>" target="_blank"><%= dish.url %></a></td>
         <td><%= dish.status %></td>
         <td><%= dish.klass.titleize %></td>
         <td><%= dish.record_id %></td>
         <td><%= dish.updated_at.strftime("%B %-m, %Y %-l:%M %P") %></td>
+      </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="5" class="center">Hooray! No broken links found.</td>
       </tr>
     <% end %>
   </tbody>
