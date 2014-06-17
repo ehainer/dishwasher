@@ -59,11 +59,11 @@ module Dishwasher
 							response = fetch(url)
 							code = response.code
 						rescue Dishwasher::Suds => e
-							logger.debug "==================================="
-							logger.debug e.to_s
+							puts "==================================="
+							puts e.to_s
 						rescue Timeout::Error => e
-							logger.debug "===========++++++++++=============="
-							logger.debug e.to_s
+							puts "===========++++++++++=============="
+							puts e.to_s
 							code = 504
 						rescue Exception => e
 							code = 404 if e.to_s.include?("404")
