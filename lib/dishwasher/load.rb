@@ -51,7 +51,7 @@ module Dishwasher
 					url = "http://" + url if !url.start_with?("http://") && !url.start_with?("https://")
 					url = url.chomp("/")
 
-					if !(url =~ /\.[a-z]+$/i) && !(url =~ /=.*$/i)
+					if !(url =~ /\.[a-z]+$/i) && !(url =~ /\?.*$/i)
 						url += "/"
 					end
 
@@ -92,7 +92,7 @@ module Dishwasher
 		end
 
 		def fetch(uri_str, limit = 10)
-			raise Dishwasher::Suds.new("Redirect limit reached") if limit == 0
+			raise Dishwasher::Suds.new("Redirect limit (#{limit}) reached") if limit == 0
 
 			ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36"
 
@@ -101,6 +101,10 @@ module Dishwasher
 			http.open_timeout = 10
 			http.read_timeout = 10
 			http.use_ssl = true if uri.scheme == 'https'
+
+			unless uri.respond_to?(:request_uri)
+				raise Dishwasher::Suds.new("Cannot make request to: #{uri_str}")
+			end
 
 			response = http.start do
 				request = Net::HTTP::Get.new(uri.request_uri, { 'User-Agent' => ua })
