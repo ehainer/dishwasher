@@ -48,7 +48,7 @@ module Dishwasher
 				record[:urls].each do |url|
 
 					url = "http://" + url if !url.start_with?("http://") && !url.start_with?("https://")
-					url += "/" unless url =~ /\.[a-z]+$/i
+					#url += "/" unless url =~ /\/[^\.]+$/i
 
 					code = DEFAULT_STATUS
 
