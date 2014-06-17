@@ -87,7 +87,7 @@ module Dishwasher
 
 			ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36"
 
-			uri_str = uri_str.chomp
+			uri_str = uri_str.strip
 			uri_str = "http://" + uri_str if !uri_str.start_with?("http://") && !uri_str.start_with?("https://")
 			uri_str = uri_str.chomp("/")
 
@@ -117,13 +117,13 @@ module Dishwasher
 					if response['location'].nil?
 						rdr = response.body.match(/<a href=\"([^>]+)\">/i)[1]
 						if rdr.start_with?("/")
-							rdr = uri.host.to_s + rdr
+							rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr
 						end
 						fetch(rdr, limit-1)
 					else
 						rdr = response['location']
 						if rdr.start_with?("/")
-							rdr = uri.host.to_s + rdr
+							rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr
 						end
 						fetch(rdr, limit-1)
 					end
