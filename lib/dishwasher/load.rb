@@ -48,7 +48,7 @@ module Dishwasher
 				record[:urls].each do |url|
 
 					url = "http://" + url if !url.start_with?("http://") && !url.start_with?("https://")
-					url += "/" if url =~ /\.[a-z]+$/i
+					url += "/" unless url =~ /\.[a-z]+$/i
 
 					code = DEFAULT_STATUS
 
@@ -176,7 +176,7 @@ module Dishwasher
 			@select_count = @select_count-results.length
 			results
 		end
-		
+
 
 		def select_remainder
 			to_select = [:id] | Dishwasher.dish_state[:columns]
