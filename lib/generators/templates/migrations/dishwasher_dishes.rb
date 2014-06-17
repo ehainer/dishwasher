@@ -4,6 +4,7 @@ class CreateDishwasherDishes < ActiveRecord::Migration
 			t.string :url
 			t.integer :status
 			t.string :klass
+			t.string :error
 			t.integer :record_id
 			t.timestamps
 		end

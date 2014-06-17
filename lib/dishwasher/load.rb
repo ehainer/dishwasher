@@ -49,8 +49,13 @@ module Dishwasher
 
 					url = "http://" + url if !url.start_with?("http://") && !url.start_with?("https://")
 					#url += "/" unless url =~ /\/[^\.]+$/i
+					if !url.end_with?("/") && !(url =~ /\.[a-z]+$/i)
+						url += "/"
+					end
 
 					code = DEFAULT_STATUS
+
+					error = ""
 
 					recent_lookup = find_recent_lookup(url)
 
@@ -59,9 +64,12 @@ module Dishwasher
 							response = fetch(url)
 							code = response.code
 						rescue Dishwasher::Suds => e
+							error = e.to_s
 						rescue Timeout::Error => e
+							error = e.to_s
 							code = 504
 						rescue Exception => e
+							error = e.to_s
 							code = 404 if e.to_s.include?("404")
 						end
 					else
@@ -73,6 +81,7 @@ module Dishwasher
 					else
 						dish = Dishwasher::Dish.find_or_initialize_by_url_and_klass_and_record_id(url.to_s, record[:klass], record[:id])
 					end
+					dish.error = error
 					dish.status = code
 					dish.updated_at = Time.now
 					dish.save
