@@ -116,9 +116,17 @@ module Dishwasher
 					response
 				when Net::HTTPRedirection then
 					if response['location'].nil?
-						fetch(response.body.match(/<a href=\"([^>]+)\">/i)[1], limit-1)
+						rdr = response.body.match(/<a href=\"([^>]+)\">/i)[1]
+						if rdr.start_with?("/")
+							rdr = uri.host.to_s + rdr
+						end
+						fetch(rdr, limit-1)
 					else
-						fetch(response['location'], limit-1)
+						rdr = response['location']
+						if rdr.start_with?("/")
+							rdr = uri.host.to_s + rdr
+						end
+						fetch(rdr, limit-1)
 					end
 				else
 					response.error!
