@@ -46,15 +46,6 @@ module Dishwasher
 		def check_urls(records)
 			records.each do |record|
 				record[:urls].each do |url|
-
-					url = url.chomp
-					url = "http://" + url if !url.start_with?("http://") && !url.start_with?("https://")
-					url = url.chomp("/")
-
-					if !(url =~ /\.[a-z]+$/i) && !(url =~ /\?.*$/i)
-						url += "/"
-					end
-
 					code = DEFAULT_STATUS
 
 					error = ""
@@ -95,6 +86,14 @@ module Dishwasher
 			raise Dishwasher::Suds.new("Redirect limit (#{limit}) reached") if limit == 0
 
 			ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36"
+
+			uri_str = uri_str.chomp
+			uri_str = "http://" + uri_str if !uri_str.start_with?("http://") && !uri_str.start_with?("https://")
+			uri_str = uri_str.chomp("/")
+
+			if !(uri_str =~ /\.[a-z]+$/i) && !(uri_str =~ /\?.*$/i)
+				uri_str += "/"
+			end
 
 			uri = URI.parse(uri_str)
 			http = Net::HTTP.new(uri.host, uri.port)
