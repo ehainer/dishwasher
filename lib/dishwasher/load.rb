@@ -47,9 +47,11 @@ module Dishwasher
 			records.each do |record|
 				record[:urls].each do |url|
 
+					url = url.chomp
 					url = "http://" + url if !url.start_with?("http://") && !url.start_with?("https://")
-					#url += "/" unless url =~ /\/[^\.]+$/i
-					if !url.end_with?("/") && !(url =~ /\.[a-z]+$/i)
+					url = url.chomp("/")
+
+					if !(url =~ /\.[a-z]+$/i) && !(url =~ /=.*$/i)
 						url += "/"
 					end
 
