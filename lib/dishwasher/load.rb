@@ -5,7 +5,7 @@ require "dishwasher/dish"
 module Dishwasher
 	class Load < ActiveRecord::Base
 
-		DEFAULT_STATUS = 500
+		DEFAULT_STATUS = 700
 
 		def start
 			@data ||= []
@@ -97,14 +97,14 @@ module Dishwasher
 
 			uri = URI.parse(uri_str)
 			http = Net::HTTP.new(uri.host, uri.port)
-			http.open_timeout = 30
-			http.read_timeout = 30
-			http.use_ssl = true if uri.scheme == 'https'
+			#http.open_timeout = 30
+			#http.read_timeout = 30
+			#http.use_ssl = true if uri.scheme == 'https'
 
 			raise Dishwasher::Suds.new("Cannot make request to: #{uri_str}") unless uri.respond_to?(:request_uri)
 
-			request = Net::HTTP::Get.new(uri.request_uri)
-			response = http.request(request)
+			#request = Net::HTTP::Get.new(uri.request_uri)
+			response = http.request_head(uri.request_uri)
 
 			if response.kind_of?(Net::HTTPRedirection) && !response['location'].nil?
 				rdr = response['location']
