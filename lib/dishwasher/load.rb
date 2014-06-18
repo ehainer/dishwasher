@@ -101,32 +101,17 @@ module Dishwasher
 			http.read_timeout = 30
 			http.use_ssl = true if uri.scheme == 'https'
 
-			unless uri.respond_to?(:request_uri)
-				raise Dishwasher::Suds.new("Cannot make request to: #{uri_str}")
-			end
+			raise Dishwasher::Suds.new("Cannot make request to: #{uri_str}") unless uri.respond_to?(:request_uri)
 
 			request = Net::HTTP::Get.new(uri.request_uri)
 			response = http.request(request)
 
-			if response.kind_of?(Net::HTTPRedirection)
-				if response['location'].nil?
-					rdr = response.body.match(/<a href=\"([^>]+)\">/i)[1]
-					if rdr.start_with?("/")
-						rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr
-					end
-					return fetch(rdr, limit-1)
-				else
-					rdr = response['location']
-					if rdr.start_with?("/")
-						rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr
-					end
-					return fetch(rdr, limit-1)
-				end
-			elsif response.kind_of?(Net::HTTPResponse)
-				return response
-			else
-				response.error!
+			if response.kind_of?(Net::HTTPRedirection) && !response['location'].nil?
+				rdr = response['location']
+				rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr if rdr.start_with?("/")
+				return fetch(rdr, limit-1)
 			end
+			response
 		end
 
 		def find_recent_lookup(url)
