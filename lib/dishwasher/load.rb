@@ -105,38 +105,27 @@ module Dishwasher
 				raise Dishwasher::Suds.new("Cannot make request to: #{uri_str}")
 			end
 
-			response = http.start do
-				request = Net::HTTP::Get.new(uri.request_uri, { 'User-Agent' => ua })
-				http.request(request)
-			end
+			request = Net::HTTP::Get.new(uri.request_uri, { 'User-Agent' => ua })
+			response = http.request(request)
 
-			case response
-				when Net::HTTPServerError then
-					response
-				when Net::HTTPClientError then
-					response
-				when Net::HTTPSuccess then
-					response
-				when Net::HTTPInformation then
-					response
-				when Net::HTTPRedirection then
-					if response['location'].nil?
-						rdr = response.body.match(/<a href=\"([^>]+)\">/i)[1]
-						if rdr.start_with?("/")
-							rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr
-						end
-						return fetch(rdr, limit-1)
-					else
-						rdr = response['location']
-						if rdr.start_with?("/")
-							rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr
-						end
-						return fetch(rdr, limit-1)
+			if response.kind_of?(Net::HTTPRedirection)
+				if response['location'].nil?
+					rdr = response.body.match(/<a href=\"([^>]+)\">/i)[1]
+					if rdr.start_with?("/")
+						rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr
 					end
-				when Net::HTTPUnknownResponse then
-					response
+					return fetch(rdr, limit-1)
 				else
-					response.error!
+					rdr = response['location']
+					if rdr.start_with?("/")
+						rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr
+					end
+					return fetch(rdr, limit-1)
+				end
+			elsif response.kind_of?(Net::HTTPResponse)
+				return response
+			else
+				response.error!
 			end
 		end
 

@@ -31,7 +31,6 @@ module Dishwasher
 	end
 
 	def self.run
-		puts "Running Dishwasher... Aww Shit."
 		begin
 			invoke_all_models
 			can_do_dishes?
@@ -39,10 +38,7 @@ module Dishwasher
 			load = Dishwasher::Load.new
 			load.start
 		rescue Dishwasher::Suds => e
-			puts "Dishwasher Failed! " + e.to_s
 		end
-		puts "Dishwasher Stopped"
-		puts ""
 	end
 
 	def self.has_recent_load?
