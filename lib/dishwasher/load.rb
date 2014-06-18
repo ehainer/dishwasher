@@ -97,15 +97,15 @@ module Dishwasher
 
 			uri = URI.parse(uri_str)
 			http = Net::HTTP.new(uri.host, uri.port)
-			http.open_timeout = 10
-			http.read_timeout = 10
+			http.open_timeout = 30
+			http.read_timeout = 30
 			http.use_ssl = true if uri.scheme == 'https'
 
 			unless uri.respond_to?(:request_uri)
 				raise Dishwasher::Suds.new("Cannot make request to: #{uri_str}")
 			end
 
-			request = Net::HTTP::Get.new(uri.request_uri, { 'User-Agent' => ua })
+			request = Net::HTTP::Get.new(uri.request_uri)
 			response = http.request(request)
 
 			if response.kind_of?(Net::HTTPRedirection)
