@@ -55,7 +55,7 @@ module Dishwasher
 					if recent_lookup == false
 						begin
 							response = fetch(url)
-							code = response.code
+							code = response.code.to_i
 						rescue Dishwasher::Suds => e
 							error = e.to_s
 						rescue Timeout::Error => e
@@ -111,7 +111,13 @@ module Dishwasher
 			end
 
 			case response
+				when Net::HTTPServerError then
+					response
+				when Net::HTTPClientError then
+					response
 				when Net::HTTPSuccess then
+					response
+				when Net::HTTPInformation then
 					response
 				when Net::HTTPRedirection then
 					if response['location'].nil?
@@ -127,6 +133,8 @@ module Dishwasher
 						end
 						fetch(rdr, limit-1)
 					end
+				when Net::HTTPUnknownResponse then
+					response
 				else
 					response.error!
 			end
