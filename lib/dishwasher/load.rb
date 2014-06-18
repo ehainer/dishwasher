@@ -5,7 +5,7 @@ require "dishwasher/dish"
 module Dishwasher
 	class Load < ActiveRecord::Base
 
-		DEFAULT_STATUS = 700
+		DEFAULT_STATUS = 500
 
 		def start
 			@data ||= []
@@ -82,8 +82,8 @@ module Dishwasher
 			end
 		end
 
-		def fetch(uri_str, limit = 10, redirects = [])
-			raise Dishwasher::Suds.new("#{redirects.join(", ")}"[0..250]) if limit == 0
+		def fetch(uri_str, limit = 15)
+			raise Dishwasher::Suds.new("Redirect limit (#{uri_str}) reached") if limit == 0
 
 			ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36"
 
@@ -97,14 +97,16 @@ module Dishwasher
 
 			uri = URI.parse(uri_str)
 			http = Net::HTTP.new(uri.host, uri.port)
-			http.use_ssl = true if uri.scheme == 'https'
 			http.open_timeout = 10
 			http.read_timeout = 10
+			http.use_ssl = true if uri.scheme == 'https'
 
-			raise Dishwasher::Suds.new("Cannot make request to: #{uri_str}") unless uri.respond_to?(:request_uri)
+			unless uri.respond_to?(:request_uri)
+				raise Dishwasher::Suds.new("Cannot make request to: #{uri_str}")
+			end
 
-			#request = Net::HTTP::Get.new(uri.request_uri)
-			response = http.request_head(uri.request_uri)
+			request = Net::HTTP::Get.new(uri.request_uri, { 'User-Agent' => ua })
+			response = http.request(request)
 
 			if response.kind_of?(Net::HTTPRedirection) && !response['location'].nil?
 				unless response['location'] == uri_str
