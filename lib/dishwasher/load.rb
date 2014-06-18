@@ -125,13 +125,13 @@ module Dishwasher
 						if rdr.start_with?("/")
 							rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr
 						end
-						fetch(rdr, limit-1)
+						return fetch(rdr, limit-1)
 					else
 						rdr = response['location']
 						if rdr.start_with?("/")
 							rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr
 						end
-						fetch(rdr, limit-1)
+						return fetch(rdr, limit-1)
 					end
 				when Net::HTTPUnknownResponse then
 					response
