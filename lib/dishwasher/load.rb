@@ -97,9 +97,9 @@ module Dishwasher
 
 			uri = URI.parse(uri_str)
 			http = Net::HTTP.new(uri.host, uri.port)
+			http.use_ssl = true if uri.scheme == 'https'
 			#http.open_timeout = 30
 			#http.read_timeout = 30
-			#http.use_ssl = true if uri.scheme == 'https'
 
 			raise Dishwasher::Suds.new("Cannot make request to: #{uri_str}") unless uri.respond_to?(:request_uri)
 
