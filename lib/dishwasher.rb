@@ -14,9 +14,6 @@ module Dishwasher
 
 	def self.included(base)
 		base.extend ClassMethods
-		base.class_eval do
-			before_save :scrub_dishes
-		end
 	end
 
 	module ClassMethods
@@ -131,4 +128,6 @@ end
 
 class ActiveRecord::Base
 	include Dishwasher
+
+	after_save :scrub_dishes
 end
