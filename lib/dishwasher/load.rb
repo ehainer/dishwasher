@@ -44,9 +44,13 @@ module Dishwasher
 
 		def check_urls(records, debug = false)
 			if debug
+				puts records.kind_of?(Array)
+				puts records
 				puts records.to_yaml
 			end
 			records.each do |record|
+				puts "==============================="
+				puts record
 				record[:urls].each do |url|
 					code = DEFAULT_STATUS
 
