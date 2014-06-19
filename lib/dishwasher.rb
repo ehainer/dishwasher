@@ -13,11 +13,11 @@ module Dishwasher
 	@@state = {}
 
 	def self.included(base)
+		after_save :scrub_dishes
 		base.extend ClassMethods
 	end
 
 	module ClassMethods
-		after_save :scrub_dishes
 
 		def wash(*args)
 			::Dishwasher::Wash.ensure_washing(self, args)
