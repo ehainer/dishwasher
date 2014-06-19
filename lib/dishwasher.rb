@@ -13,8 +13,10 @@ module Dishwasher
 	@@state = {}
 
 	def self.included(base)
-		after_save :scrub_dishes
 		base.extend ClassMethods
+		base.class_eval do
+			before_save :scrub_dishes
+		end
 	end
 
 	module ClassMethods
