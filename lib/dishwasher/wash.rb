@@ -8,5 +8,23 @@ module Dishwasher
 				create(klass: wash.to_s, columns: dishes)
 			end
 		end
+
+		def self.scrub(dish)
+			existing = where(klass: dish.to_s).first
+			unless existing.nil?
+				load = Dishwasher::Load.new
+				data = []
+				columns = existing.columns.split(",")
+				puts dish.to_yaml
+				puts columns.to_yaml
+				columns.each do |column|
+					data << { id: dish.id, klass: dish.class.name.to_s, content: dish[column] }
+				end
+				puts data
+				urls = load.parse_data(data)
+				puts urls
+				load.check_urls(urls)
+			end
+		end
 	end
 end
