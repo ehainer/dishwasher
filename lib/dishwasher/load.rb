@@ -4,7 +4,7 @@ require "dishwasher/dish"
 module Dishwasher
 	class Load < ActiveRecord::Base
 
-		DEFAULT_STATUS = 500
+		DEFAULT_STATUS = 700
 
 		ACCEPT = [200, 201, 202, 203, 204, 205, 206, 300, 301, 302, 303, 304]
 
@@ -82,7 +82,7 @@ module Dishwasher
 
 
 					if ACCEPT.include?(code)
-						Dishwasher::Dish.where(klass: record[:klass], record_id: record[:id]).where("status NOT IN (?)", ACCEPT).destroy_all
+						Dishwasher.delete_all(["klass = ? AND record_id = ? AND status NOT IN (?)", record[:klass], record[:id], ACCEPT])
 					end
 				end
 			end

@@ -16,7 +16,7 @@ module Dishwasher
 		base.extend ClassMethods
 		base.class_eval do
 			after_save do
-				::Dishwasher::Wash.scrub(self) unless self.class.name.to_s.start_with?("Dishwasher")
+				::Dishwasher::Wash.scrub(self) unless self.class.name.to_s.start_with?("Dishwasher::")
 			end
 		end
 	end
