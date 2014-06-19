@@ -62,7 +62,9 @@ module Dishwasher
 							error = e.to_s
 						rescue Exception => e
 							error = e.to_s
-							code = e.http_code
+							if e.respond_to?(:http_code)
+								code = e.http_code
+							end
 						end
 					else
 						code = recent_lookup.status
