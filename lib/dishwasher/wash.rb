@@ -10,7 +10,8 @@ module Dishwasher
 		end
 
 		def self.scrub(dish)
-			existing = where(klass: dish.to_s).first
+			puts dish.class.name.to_s
+			existing = where(klass: dish.class.name.to_s).first
 			unless existing.nil?
 				load = Dishwasher::Load.new
 				data = []
