@@ -82,7 +82,7 @@ module Dishwasher
 
 
 					if ACCEPT.include?(code)
-						Dishwasher.delete_all(["klass = ? AND record_id = ? AND status NOT IN (?)", record[:klass], record[:id], ACCEPT])
+						Dishwasher::Dish.delete_all(["klass = ? AND record_id = ? AND status NOT IN (?)", record[:klass], record[:id], ACCEPT])
 					end
 				end
 			end
