@@ -60,12 +60,9 @@ module Dishwasher
 							code = response.code.to_i
 						rescue Dishwasher::Suds => e
 							error = e.to_s
-						rescue Timeout::Error => e
-							error = e.to_s
-							code = 504
 						rescue Exception => e
-							error = e.to_s
-							code = 404 if e.to_s.include?("404")
+							error = e.response
+							code = e.http_code
 						end
 					else
 						code = recent_lookup.status
