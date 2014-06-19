@@ -17,13 +17,8 @@ module Dishwasher
 	end
 
 	module ClassMethods
-
 		def wash(*args)
 			::Dishwasher::Wash.ensure_washing(self, args)
-		end
-
-		def scrub_dishes
-			::Dishwasher::Wash.scrub(self)
 		end
 	end
 
@@ -130,4 +125,8 @@ class ActiveRecord::Base
 	include Dishwasher
 
 	after_save :scrub_dishes
+
+	def scrub_dishes
+		::Dishwasher::Wash.scrub(self)
+	end
 end
