@@ -6,6 +6,8 @@ module Dishwasher
 
 		DEFAULT_STATUS = 500
 
+		ACCEPT = [200, 201, 202, 203, 204, 205, 206, 300, 301, 302, 303, 304]
+
 		def start
 			@data ||= []
 			@select_count = Dishwasher.chunk_size
@@ -42,15 +44,8 @@ module Dishwasher
 			self
 		end
 
-		def check_urls(records, debug = false)
-			if debug
-				puts records.kind_of?(Array)
-				puts records
-				puts records.to_yaml
-			end
+		def check_urls(records)
 			records.each do |record|
-				puts "==============================="
-				puts record
 				record[:urls].each do |url|
 					code = DEFAULT_STATUS
 
@@ -84,6 +79,11 @@ module Dishwasher
 					dish.status = code
 					dish.updated_at = Time.now
 					dish.save
+
+
+					if ACCEPT.include?(code)
+						Dishwasher::Dish.where(klass: record[:klass], record_id: record[:id]).where("status NOT IN (?)", ACCEPT).destroy_all
+					end
 				end
 			end
 		end

@@ -20,7 +20,7 @@ module Dishwasher
 				end
 				urls = load.parse_data(data)
 				urls = [urls] unless urls.kind_of?(Array)
-				load.check_urls(urls, true)
+				load.check_urls(urls)
 			end
 		end
 	end
