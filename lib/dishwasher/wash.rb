@@ -18,11 +18,9 @@ module Dishwasher
 				columns.each do |column|
 					data << { id: dish.id, klass: dish.class.name.to_s, content: dish[column] }
 				end
-				puts data
 				urls = load.parse_data(data)
 				urls = [urls] unless urls.kind_of?(Array)
-				puts urls
-				load.check_urls(urls)
+				load.check_urls(urls, true)
 			end
 		end
 	end

@@ -42,7 +42,10 @@ module Dishwasher
 			self
 		end
 
-		def check_urls(records)
+		def check_urls(records, debug = false)
+			if debug
+				puts records.to_yaml
+			end
 			records.each do |record|
 				record[:urls].each do |url|
 					code = DEFAULT_STATUS
