@@ -19,4 +19,5 @@ Gem::Specification.new do |s|
   s.summary = "Periodically check links in database fields for connection errors."
   s.add_runtime_dependency "echoe"
   s.add_runtime_dependency "whenever"
+  s.add_runtime_dependency "rest-client"
 end

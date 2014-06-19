@@ -1,5 +1,4 @@
-require "net/http"
-require "uri"
+require "rest_client"
 require "dishwasher/dish"
 
 module Dishwasher
@@ -91,32 +90,34 @@ module Dishwasher
 			uri_str = "http://" + uri_str if !uri_str.start_with?("http://") && !uri_str.start_with?("https://")
 			uri_str = uri_str.chomp("/")
 
-			if !(uri_str =~ /\.[a-z]+$/i) && !(uri_str =~ /\?.*$/i)
-				uri_str += "/"
-			end
+			#if !(uri_str =~ /\.[a-z]+$/i) && !(uri_str =~ /\?.*$/i)
+			#	uri_str += "/"
+			#end
 
-			uri = URI.parse(uri_str)
-			http = Net::HTTP.new(uri.host, uri.port)
-			http.open_timeout = 10
-			http.read_timeout = 10
-			http.use_ssl = true if uri.scheme == 'https'
+			return RestClient.get uri_str
 
-			unless uri.respond_to?(:request_uri)
-				raise Dishwasher::Suds.new("Cannot make request to: #{uri_str}")
-			end
-
-			request = Net::HTTP::Get.new(uri.request_uri, { 'User-Agent' => ua })
-			response = http.request(request)
-
-			if response.kind_of?(Net::HTTPRedirection) && !response['location'].nil?
-				unless response['location'] == uri_str
-					rdr = response['location']
-					rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr if rdr.start_with?("/")
-					redirects << response['location']
-					return fetch(rdr, limit-1, redirects)
-				end
-			end
-			response
+			#uri = URI.parse(uri_str)
+			#http = Net::HTTP.new(uri.host, uri.port)
+			#http.open_timeout = 10
+			#http.read_timeout = 10
+			#http.use_ssl = true if uri.scheme == 'https'
+#
+#			#unless uri.respond_to?(:request_uri)
+#			#	raise Dishwasher::Suds.new("Cannot make request to: #{uri_str}")
+#			#end
+#
+#			#request = Net::HTTP::Get.new(uri.request_uri, { 'User-Agent' => ua })
+#			#response = http.request(request)
+#
+#			#if response.kind_of?(Net::HTTPRedirection) && !response['location'].nil?
+#			#	unless response['location'] == uri_str
+#			#		rdr = response['location']
+#			#		rdr = uri.scheme.to_s + "://" + uri.host.to_s + rdr if rdr.start_with?("/")
+#			#		redirects << response['location']
+#			#		return fetch(rdr, limit-1, redirects)
+#			#	end
+#			#end
+			#response
 		end
 
 		def find_recent_lookup(url)
