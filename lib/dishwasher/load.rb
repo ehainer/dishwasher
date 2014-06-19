@@ -61,7 +61,7 @@ module Dishwasher
 						rescue Dishwasher::Suds => e
 							error = e.to_s
 						rescue Exception => e
-							error = e.response
+							error = e.to_s
 							code = e.http_code
 						end
 					else
