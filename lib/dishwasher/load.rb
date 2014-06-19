@@ -73,7 +73,7 @@ module Dishwasher
 					else
 						dish = Dishwasher::Dish.find_or_initialize_by_url_and_klass_and_record_id(url.to_s, record[:klass], record[:id])
 					end
-					dish.error = error[0..250]
+					dish.error = error[0..250].force_encoding('iso8859-1').encode('utf-8')
 					dish.status = code
 					dish.updated_at = Time.now
 					dish.save
