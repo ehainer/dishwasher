@@ -14,6 +14,11 @@ module Dishwasher
 
 	def self.included(base)
 		base.extend ClassMethods
+		base.class_eval do
+			after_save do
+				::Dishwasher::Wash.scrub(self) unless self.class.name.to_s.start_with?("Dishwasher")
+			end
+		end
 	end
 
 	module ClassMethods
@@ -123,10 +128,4 @@ end
 
 class ActiveRecord::Base
 	include Dishwasher
-
-	after_save :scrub_dishes
-
-	def scrub_dishes
-		::Dishwasher::Wash.scrub(self)
-	end
 end
