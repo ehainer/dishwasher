@@ -39,6 +39,7 @@ module Dishwasher
 		begin
 			invoke_all_models
 			can_do_dishes?
+			cleanup
 			init_state
 			load = Dishwasher::Load.new
 			load.start
@@ -100,6 +101,10 @@ module Dishwasher
 
 	def self.can_do_dishes?
 		raise Dishwasher::Suds.new("Nothing configured to scan.") if Dishwasher::Wash.all.count == 0
+	end
+
+	def self.cleanup
+		Dishwasher::Load.delete_all(["created_at < ?", 1.week.ago])
 	end
 
 	private
