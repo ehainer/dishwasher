@@ -80,7 +80,6 @@ module Dishwasher
 					dish.updated_at = Time.now
 					dish.save
 
-
 					if ACCEPT.include?(code)
 						Dishwasher::Dish.delete_all(["klass = ? AND record_id = ? AND status NOT IN (?)", record[:klass], record[:id], ACCEPT])
 					end
@@ -88,12 +87,9 @@ module Dishwasher
 			end
 		end
 
-		def fetch(uri_str, limit = 15)
-			raise Dishwasher::Suds.new("Redirect limit (#{uri_str}) reached") if limit == 0
-
-			ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36"
-
+		def fetch(uri_str)
 			uri_str = uri_str.strip
+			uri_str = "ftp://" + uri_str if !uri_str.start_with?("http://") && !uri_str.start_with?("https://") && uri_str.start_with?("ftp.")
 			uri_str = "http://" + uri_str if !uri_str.start_with?("http://") && !uri_str.start_with?("https://") && !uri_str.start_with?("ftp://")
 			uri_str = uri_str.chomp("/")
 
