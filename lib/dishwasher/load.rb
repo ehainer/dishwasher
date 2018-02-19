@@ -72,18 +72,14 @@ module Dishwasher
 						code = recent_lookup.status
 					end
 
-					if Rails::VERSION::MAJOR.to_i >= 4
-						dish = Dishwasher::Dish.find_or_initialize_by(url: url.to_s, klass: record[:klass], record_id: record[:id])
-					else
-						dish = Dishwasher::Dish.find_or_initialize_by_url_and_klass_and_record_id(url.to_s, record[:klass], record[:id])
-					end
+					dish = Dishwasher::Dish.find_or_initialize_by(url: url.to_s, klass: record[:klass], record_id: record[:id])
 					dish.error = error[0..250].force_encoding('iso8859-1').encode('utf-8')
 					dish.status = code
 					dish.updated_at = Time.now
 					dish.save
 
 					if ACCEPT.include?(code)
-						Dishwasher::Dish.delete_all(["klass = ? AND record_id = ? AND status NOT IN (?)", record[:klass], record[:id], ACCEPT])
+						Dishwasher::Dish.where("klass = ? AND record_id = ? AND status NOT IN (?)", record[:klass], record[:id], ACCEPT).delete_all
 					end
 				end
 			end

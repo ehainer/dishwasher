@@ -1,4 +1,4 @@
-class CreateDishwasherWashes < ActiveRecord::Migration
+class CreateDishwasherWashes < ActiveRecord::Migration[4.2]
 	def up
 		create_table :dishwasher_washes do |t|
 			t.string :klass

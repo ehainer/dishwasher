@@ -104,7 +104,7 @@ module Dishwasher
 	end
 
 	def self.cleanup
-		Dishwasher::Load.delete_all(["created_at < ?", 1.week.ago])
+		Dishwasher::Load.where("created_at < ?", 1.week.ago).delete_all
 	end
 
 	private
