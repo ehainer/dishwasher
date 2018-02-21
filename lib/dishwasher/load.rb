@@ -106,7 +106,7 @@ module Dishwasher
 		def add_data(results)
 			i = 1
 			results.each do |result|
-				Dishwasher.dish_state[:columns].each do |column|
+				result.class.instance_variable_get("@__dishwasher_columns").each do |column|
 					if column.to_s != "id"
 						@data << { id: result[:id], klass: result.class.name.to_s, content: result[column] }
 					end

@@ -23,6 +23,7 @@ module Dishwasher
 
 	module ClassMethods
 		def wash(*args)
+			instance_variable_set("@__dishwasher_columns", args.flatten.map(&:to_s))
 			::Dishwasher::Wash.ensure_washing(self, args)
 		end
 	end
