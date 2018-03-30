@@ -6,6 +6,7 @@ class CreateDishwasherDishes < ActiveRecord::Migration[4.2]
 			t.string :klass
 			t.string :error
 			t.integer :record_id
+			t.integer :checked, default: 0
 			t.timestamps
 		end
 	end

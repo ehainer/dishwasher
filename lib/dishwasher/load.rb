@@ -75,8 +75,11 @@ module Dishwasher
 					dish = Dishwasher::Dish.find_or_initialize_by(url: url.to_s, klass: record[:klass], record_id: record[:id])
 					dish.error = error[0..250].force_encoding('iso8859-1').encode('utf-8')
 					dish.status = code
+					dish.checked = (dish.checked || 0) + 1
 					dish.updated_at = Time.now
 					dish.save
+
+					dish.delete if dish.checked > Dishwasher.max_checks
 
 					if ACCEPT.include?(code)
 						Dishwasher::Dish.where("klass = ? AND record_id = ? AND status NOT IN (?)", record[:klass], record[:id], ACCEPT).delete_all

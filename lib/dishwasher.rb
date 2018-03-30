@@ -12,6 +12,9 @@ module Dishwasher
 	mattr_accessor :dish_state
 	@@state = {}
 
+	mattr_accessor :max_checks
+	@@max_checks = 5
+
 	def self.included(base)
 		base.extend ClassMethods
 		base.class_eval do
