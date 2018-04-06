@@ -98,12 +98,13 @@ module Dishwasher
 		end
 
 		def find_recent_lookup(url)
-			dish = Dishwasher::Dish.where(url: url).where("updated_at > ?", 10.minutes.ago).first
-			unless dish.nil?
-				dish
-			else
-				false
-			end
+			return false
+#			dish = Dishwasher::Dish.where(url: url).where("updated_at > ?", 10.minutes.ago).first
+#			unless dish.nil?
+#				dish
+#			else
+#				false
+#			end
 		end
 
 		def add_data(results)
